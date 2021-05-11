@@ -19,6 +19,8 @@ router.post("/", function (req, res) {
     fetch(url, { method: "GET" })
     .then((res) => res.json())
     .then(async (json) => {
+
+        /* Check if there's any webhooks */
         if(json.length === 0) {
             res.send("No webhooks saved");
             return false;
