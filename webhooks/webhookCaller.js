@@ -19,8 +19,12 @@ router.post("/", function (req, res) {
     fetch(url, { method: "GET" })
     .then((res) => res.json())
     .then(async (json) => {
-        for (const element of json) {
+        if(json.length === 0) {
+            res.send("No webhooks saved");
+            return false;
+        }
 
+        for (const element of json) {
             const elementPath = element.url
             const token = element.token
             payload = { token, ...payload }
