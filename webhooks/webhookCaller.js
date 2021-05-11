@@ -5,11 +5,18 @@ router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
 router.post("/", function (req, res) {
-  let payload = req.body;
-  /* Should be changed to actual place where we store webhooks */
-  const url = "http://localhost:9876/api/webhooks/";
+    let payload = req.body;
 
-  fetch(url, { method: "GET" })
+    /* Should be changed to actual place where we store webhooks */
+    const url = "http://localhost:9876/api/webhooks/";
+
+    /* Check if there's a body or a payload. */
+    if(!payload.payload || !req.body) {
+        res.send('No payload') 
+        return false;
+    }
+
+    fetch(url, { method: "GET" })
     .then((res) => res.json())
     .then(async (json) => {
         for (const element of json) {
@@ -27,7 +34,12 @@ router.post("/", function (req, res) {
 
             } catch (error) {
                 res.send(elementPath + "failed to execute");
-                /* I guess we will stop the function if something fails? */
+                /* I guess we will stop the function if something fails? 
+                Incase some of the hooks triggered afterwards depend on the prior
+                hooks to succeed?
+
+                Else I would sotyre the error message in a variable and send it
+                instead of the success message below. */
                 return false;
             }
         }
